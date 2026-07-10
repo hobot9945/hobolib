@@ -1,15 +1,14 @@
-//! Часто используемые макросы.
+//! Commonly used macros.
 
-/// `prntln!` - макрос для печати форматированной строки с опциональным добавлением имени файла и номера строки.
+/// `prntln!` - macro for printing a formatted string with an optional file name and line number prefix.
 ///
-/// Этот макрос работает аналогично стандартному макросу `println!`, но имеет дополнительную
-/// функциональность: если флаг `PRINT_FILE_LINE` (управляется через `glob::set_print_file_line`) равен `true`,
-/// то перед выводом форматированной строки будет напечатано имя файла и номер строки,
-/// откуда был вызван макрос.
+/// Works like the standard `println!` macro, but with extra functionality: if the `PRINT_FILE_LINE`
+/// flag (controlled via `glob::set_print_file_line`) is `true`, the file name and line number
+/// of the call site are printed before the formatted string.
 ///
-/// # Параметры
+/// # Parameters
 ///
-/// Макрос принимает те же параметры, что и стандартный `println!`
+/// Accepts the same parameters as the standard `println!`.
 #[macro_export]
 macro_rules! prntln {
     ($($arg:tt)*) => {
@@ -21,11 +20,11 @@ macro_rules! prntln {
     };
 }
 
-/// `eprntln!` - аналогичен системному макросу eprintln!, с той разницей, что выводится имя файла и
-/// номер строки, в которой макрос был вызван.
+/// `eprntln!` - equivalent to the standard `eprintln!`, but always prepends the file name
+/// and line number of the call site.
 ///
-/// # Параметры
-/// Макрос принимает те же параметры, что и стандартный `eprintln!`
+/// # Parameters
+/// Accepts the same parameters as the standard `eprintln!`.
 #[macro_export]
 macro_rules! eprntln {
     ($($arg:tt)*) => {
@@ -34,23 +33,24 @@ macro_rules! eprntln {
     };
 }
 
-/// `prln!` - макрос для печати выражения и его значения.
+/// `prln!` - macro for printing expressions and their values.
 ///
-/// Этот макрос принимает список выражений, разделенных запятыми,
-/// и выводит каждое выражение в формате "выражение=значение". Первым параметром может идти вводная строка
+/// Accepts a comma-separated list of expressions and prints each one in the format
+/// `expression=value`. An optional string literal may be passed as the first argument
+/// to serve as a label.
 ///
-/// # Примеры
+/// # Examples
 ///
 /// ```
 /// use hobolib::prln;
 /// let x = 10;
 /// let y = 5;
 /// prln!(x, y, x + y, 2 * x - y);
-/// // Вывод:
+/// // Output:
 /// // x=10, y=5, x + y=15, 2 * x - y=15
-/// prln!("выражения:", x, y, x + y, 2 * x - y);
-/// //  Вывод:
-/// // выражения: x=10, y=5, x + y=15, 2 * x - y=15
+/// prln!("expressions:", x, y, x + y, 2 * x - y);
+/// // Output:
+/// // expressions: x=10, y=5, x + y=15, 2 * x - y=15
 /// ```
 #[macro_export]
 macro_rules! prln {
@@ -87,16 +87,16 @@ macro_rules! prln {
     };
 }
 
-/// `prlnln!` - то же самое что и `prln!`, но печатает каждый аргумент с новой стоки.
+/// `prlnln!` - same as `prln!`, but prints each argument on a separate line.
 ///
-/// # Примеры
+/// # Examples
 ///
 /// ```
 /// use hobolib::prlnln;
 /// let x = 10;
 /// let y = 5;
 /// prlnln!(x, y, x + y, 2 * x - y);
-/// // Вывод:
+/// // Output:
 /// // x=10
 /// // y=5
 /// // x + y=15
@@ -136,15 +136,20 @@ macro_rules! prlnln {
 }
 
 
-/// Делает то же самое что print!, он для вывода использует write_all() (без буферизации).
-/// Нужно для печати из тестов, не дожидаясь их окончания.
-// #[macro_export]
-// macro_rules! writ { // Работает только в линуксе.
-//     ($($arg:tt)*) => {
-//         let mut res = std::io::stdout();
-//         std::io::Write::write_all(&mut res, &format!($($arg)*).as_bytes()[..]).unwrap();
-//     };
-// }
+/// Same as `print!`, but uses `write_all()` (unbuffered output).
+/// Needed for printing from tests without waiting for them to finish.
+///
+/// # Examples
+///
+/// ```
+/// #[macro_export]
+/// macro_rules! writ { // Works on Linux only.
+///     ($($arg:tt)*) => {
+///         let mut res = std::io::stdout();
+///         std::io::Write::write_all(&mut res, &format!($($arg)*).as_bytes()[..]).unwrap();
+///     };
+/// }
+/// ```
 #[macro_export]
 macro_rules! writ {
     ($($arg:tt)*) => {
@@ -158,8 +163,8 @@ macro_rules! writ {
     };
 }
 
-/// Делает то же самое что println!, он для вывода использует write_all() (без буферизации).
-/// Нужно для печати из тестов, не дожидаясь их окончания.
+/// Same as `println!`, but uses `write_all()` (unbuffered output).
+/// Needed for printing from tests without waiting for them to finish.
 #[macro_export]
 macro_rules! writln {
     () => {
@@ -180,24 +185,25 @@ macro_rules! writln {
     };
 }
 
-/// `wrln!` - макрос для печати выражения и его значения. Нужен для печати из тестов не дожидаясь их
-/// окончания.
+/// `wrln!` - macro for printing expressions and their values. Unbuffered; intended for use
+/// in tests so output appears immediately without waiting for the test to complete.
 ///
-/// Этот макрос принимает список выражений, разделенных запятыми,
-/// и выводит каждое выражение в формате "выражение=значение". Первым параметром может идти вводная строка
+/// Accepts a comma-separated list of expressions and prints each one in the format
+/// `expression=value`. An optional string literal may be passed as the first argument
+/// to serve as a label.
 ///
-/// # Примеры
+/// # Examples
 ///
 /// ```
 /// use hobolib::wrln;
 /// let x = 10;
 /// let y = 5;
 /// wrln!(x, y, x + y, 2 * x - y);
-/// // Вывод:
+/// // Output:
 /// // x=10, y=5, x + y=15, 2 * x - y=15
-/// wrln!("выражения:", x, y, x + y, 2 * x - y);
-/// //  Вывод:
-/// // выражения: x=10, y=5, x + y=15, 2 * x - y=15
+/// wrln!("expressions:", x, y, x + y, 2 * x - y);
+/// // Output:
+/// // expressions: x=10, y=5, x + y=15, 2 * x - y=15
 /// ```
 #[macro_export]
 macro_rules! wrln {
@@ -234,16 +240,16 @@ macro_rules! wrln {
     };
 }
 
-/// `wrlnln!` - то же самое что и `wrln!`, но печатает каждый аргумент с новой стоки.
+/// `wrlnln!` - same as `wrln!`, but prints each argument on a separate line.
 ///
-/// # Примеры
+/// # Examples
 ///
 /// ```
 /// use hobolib::wrlnln;
 /// let x = 10;
 /// let y = 5;
 /// wrlnln!(x, y, x + y, 2 * x - y);
-/// // Вывод:
+/// // Output:
 /// // x=10
 /// // y=5
 /// // x + y=15
@@ -299,7 +305,7 @@ mod tests {
         // Вывод:
         // x=10, y=5, x + y=15, 2 * x - y=15
 
-        prln!("выражения:", x, y, x + y, 2 * x - y);
+        prln!("expression:", x, y, x + y, 2 * x - y);
         //  Вывод:
         // выражения: x=10, y=5, x + y=15, 2 * x - y=15
 
@@ -336,7 +342,7 @@ mod tests {
         // Вывод:
         // x=10, y=5, x + y=15, 2 * x - y=15
 
-        wrln!("выражения:", x, y, x + y, 2 * x - y);
+        wrln!("expression:", x, y, x + y, 2 * x - y);
         //  Вывод:
         // выражения: x=10, y=5, x + y=15, 2 * x - y=15
 

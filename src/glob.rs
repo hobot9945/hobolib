@@ -1,20 +1,24 @@
-//! Общие константы и переменные библиотеки.
+//! Common library constants and variables.
 
 use std::sync::atomic::{AtomicBool, Ordering};
 
 static PRINT_FILE_LINE: AtomicBool = AtomicBool::new(true);
 
-/// Указание макросам печати, таким как prln!() и wrln!() дополнять сообщение именем файла и номера
-/// строки вызова макроса.
+/// Configures printing macros such as `prln!()` and `wrln!()` to prepend the file name
+/// and the call-site line number to the message.
 ///
-/// # Объяснение
-/// Бывает что забытый макрос печатает ненужные сообщения при работе программы, но его крайне трудно
-/// найти. В этом случае выставляем этот флаг и макрос показывает точку в программе где он находится.
+/// # Explanation
+/// Sometimes a forgotten macro keeps printing unwanted messages during program execution,
+/// but locating it is difficult. In that case, enable this flag and the macro will print
+/// the exact location where it was called.
+///
+/// # Params
+/// * value: value to set
 pub fn set_print_file_line(value: bool) {
     PRINT_FILE_LINE.store(value, Ordering::Relaxed);
 }
 
-/// Возвращает текущее состояние флага PRINT_FILE_LINE.
+/// Returns the current state of the `PRINT_FILE_LINE` flag.
 pub fn print_file_line() -> bool {
     PRINT_FILE_LINE.load(Ordering::Relaxed)
 }
