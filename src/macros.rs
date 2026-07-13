@@ -33,11 +33,16 @@ macro_rules! eprntln {
     };
 }
 
-/// `prln!` - macro for printing expressions and their values.
+/// `prln!` - concise macro for debug-printing expressions and their values.
 ///
+/// Intended as a quick debugging tool, more rigid but shorter than `println!`.
 /// Accepts a comma-separated list of expressions and prints each one in the format
 /// `expression=value`. An optional string literal may be passed as the first argument
 /// to serve as a label.
+///
+/// # Usage
+/// - For quick inspection of variables during development.
+/// - Not intended for user-facing output or structured logging.
 ///
 /// # Examples
 ///
@@ -286,6 +291,33 @@ macro_rules! wrlnln {
             $crate::writln!("{}={:#?}", stringify!($val), $val);
         )*
     };
+}
+
+/// Handles a fatal (non-recoverable) error without panicking.
+///
+/// Logs the error to `stderr` with file name and line number, displays a modal
+/// error dialog to the user, and requests global application shutdown.
+///
+/// # Usage
+/// The caller **must return** after invoking this macro. The macro does not
+/// alter control flow (no `panic!`, no `return`).
+///
+/// # Parameters
+/// Accepts the same parameters as the standard `format!`.
+///
+/// # Example
+/// ```ignore
+/// fatal!("Failed to bind to port {}: {}", port, err);
+/// return;
+/// ```
+#[macro_export]
+macro_rules! fatal {
+    ($($arg:tt)*) => {{
+        let msg = format!($($arg)*);
+        $crate::eprntln!("{}", msg);
+        $crate::misc::message_box::show_error("Fatal Error", &msg);
+        $crate::glob::request_shutdown();
+    }};
 }
 
 #[cfg(test)]
