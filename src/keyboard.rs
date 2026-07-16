@@ -5,60 +5,59 @@ use crate::keyboard::keyboard_backend::{send_key_combo, send_key_press};
 
 mod keyboard_backend;
 
-/// Описание: Нажимает и отпускает клавишу по её VK-коду (press).
+/// Description: Presses and releases a key by its VK-code (press).
 ///
-/// # Параметры
-/// - `vk`: виртуальный код клавиши (VK_*), например:
+/// # Parameters
+/// - `vk`: virtual key code (VK_*), e.g.:
 ///   - Ctrl = 0x11
 ///   - Enter = 0x0D
 ///
-/// # Ошибки
-/// Возвращает `Err(String)`, если SendInput не смог отправить события.
+/// # Errors
+/// Returns `Err(String)` if SendInput fails to send the events.
 pub fn send_vk_press(vk: u16) -> Result<(), String> {
     send_key_press(VIRTUAL_KEY(vk))
 }   // send_vk_press()
 
-/// Описание: Отправляет комбинацию вида "модификаторы + основная клавиша" по VK-кодам.
+/// Description: Sends a key combination of "modifiers + main key" using VK-codes.
 ///
-/// Примеры:
+/// Examples:
 /// - modifiers=[0x11], key=0x56  -> Ctrl+V
 /// - modifiers=[0x11,0x10], key=0x53 -> Ctrl+Shift+S
 ///
-/// # Параметры
-/// - `modifiers`: VK-коды модификаторов (Ctrl/Shift/Alt/Win и т.п.)
-/// - `key`: VK-код основной клавиши
+/// # Parameters
+/// - `modifiers`: VK-codes of modifiers (Ctrl/Shift/Alt/Win, etc.)
+/// - `key`: VK-code of the main key
 ///
-/// # Ошибки
-/// Возвращает `Err(String)`, если SendInput не смог отправить события.
+/// # Errors
+/// Returns `Err(String)` if SendInput fails to send the events.
 pub fn send_vk_combo(modifiers: &[u16], key: u16) -> Result<(), String> {
 
-    // Переводим u16 -> VIRTUAL_KEY. Нужен Vec, потому что send_key_combo принимает срез.
+    // Convert u16 -> VIRTUAL_KEY. A Vec is needed because send_key_combo takes a slice.
     let mods: Vec<VIRTUAL_KEY> = modifiers.iter().map(|&v| VIRTUAL_KEY(v)).collect();
 
     send_key_combo(&mods, VIRTUAL_KEY(key))
 
 }   // send_vk_combo()
 
-/// Описание: Отправляет нажатие Enter (press) в текущий фокус.
+/// Description: Sends an Enter key press to the current focus.
 ///
-/// Использует виртуальный код VK_RETURN (0x0D), что достаточно для обычных окон
-/// с текстовым вводом.
+/// Uses the virtual key code VK_RETURN (0x0D), which is sufficient for standard windows
+/// with text input.
 ///
-/// # Ошибки
-/// Возвращает `Err(String)`, если SendInput не смог отправить события.
+/// # Errors
+/// Returns `Err(String)` if SendInput fails to send the events.
 pub fn send_enter() -> Result<(), String> {
 
     let vk_return = VIRTUAL_KEY(0x0D);
     send_key_press(vk_return)
 }   // send_enter()
 
-/// Описание: Отправляет комбинацию Ctrl+Enter в текущий фокус.
+/// Description: Sends a Ctrl+Enter combination to the current focus.
 ///
-/// Используется для принудительной отправки сообщений в веб-формах,
-/// где обычный Enter может работать как перевод строки.
+/// Used to force send messages in web forms, where a regular Enter might act as a line break.
 ///
-/// # Ошибки
-/// Возвращает `Err(String)`, если SendInput вернул 0 или отправил не все события.
+/// # Errors
+/// Returns `Err(String)` if SendInput returned 0 or did not send all events.
 pub fn send_ctrl_enter() -> Result<(), String> {
 
     let vk_ctrl = VIRTUAL_KEY(0x11);
@@ -67,10 +66,10 @@ pub fn send_ctrl_enter() -> Result<(), String> {
     send_key_combo(&[vk_ctrl], vk_return)
 }   // send_ctrl_enter()
 
-/// Описание: Отправляет комбинацию Ctrl+V в текущий фокус.
+/// Description: Sends a Ctrl+V combination to the current focus.
 ///
-/// # Ошибки
-/// Возвращает `Err(String)`, если SendInput вернул 0 или отправил не все события.
+/// # Errors
+/// Returns `Err(String)` if SendInput returned 0 or did not send all events.
 pub fn send_ctrl_v() -> Result<(), String> {
 
     // let vk_ctrl = VIRTUAL_KEY(0x11);
@@ -83,10 +82,10 @@ pub fn send_ctrl_v() -> Result<(), String> {
 
 }   // send_ctrl_v()
 
-/// Описание: Отправляет комбинацию Ctrl+A в текущий фокус (выделить всё).
+/// Description: Sends a Ctrl+A combination to the current focus (select all).
 ///
-/// # Ошибки
-/// Возвращает `Err(String)`, если SendInput вернул 0 или отправил не все события.
+/// # Errors
+/// Returns `Err(String)` if SendInput returned 0 or did not send all events.
 pub fn send_ctrl_a() -> Result<(), String> {
 
     let vk_ctrl = VIRTUAL_KEY(0x11);
@@ -95,10 +94,10 @@ pub fn send_ctrl_a() -> Result<(), String> {
     send_key_combo(&[vk_ctrl], vk_a)
 }   // send_ctrl_a()
 
-/// Описание: Отправляет комбинацию Ctrl+C в текущий фокус (копировать).
+/// Description: Sends a Ctrl+C combination to the current focus (copy).
 ///
-/// # Ошибки
-/// Возвращает `Err(String)`, если SendInput вернул 0 или отправил не все события.
+/// # Errors
+/// Returns `Err(String)` if SendInput returned 0 or did not send all events.
 pub fn send_ctrl_c() -> Result<(), String> {
 
     let vk_ctrl = VIRTUAL_KEY(0x11);
@@ -107,35 +106,35 @@ pub fn send_ctrl_c() -> Result<(), String> {
     // send_key_combo(&[vk_ctrl], vk_c)
 
 
-    // С моей раскладкой сайт https://chat.deepseek.com воспринимает Ctrl+c как Ctrl+j (при этом,
-    // Ctrl+v работает нормально). Поэтому, использую запасной вариант Ctrl+insert.
-    // Он будет работать на всех раскладках.
+    // With my keyboard layout, the site https://chat.deepseek.com perceives Ctrl+C as Ctrl+J (meanwhile,
+    // Ctrl+V works fine). Therefore, I use the fallback option Ctrl+Insert.
+    // It will work on all layouts.
     let vk_insert = VIRTUAL_KEY(0x2D);
     send_key_combo(&[vk_ctrl], vk_insert)
 }   // send_ctrl_c()
 
-/// Описание: Отправляет нажатие Escape (press) в текущий фокус.
+/// Description: Sends an Escape key press to the current focus.
 ///
-/// Использует виртуальный код VK_ESCAPE (0x1B).
+/// Uses the virtual key code VK_ESCAPE (0x1B).
 ///
-/// # Ошибки
-/// Возвращает `Err(String)`, если SendInput не смог отправить события.
+/// # Errors
+/// Returns `Err(String)` if SendInput fails to send the events.
 pub fn send_esc() -> Result<(), String> {
 
     let vk_esc = VIRTUAL_KEY(0x1B);
     send_key_press(vk_esc)
 }   // send_esc()
 
-/// Описание: Отправляет комбинацию Alt+F4 в текущий фокус.
+/// Description: Sends an Alt+F4 combination to the current focus.
 ///
-/// Обычно закрывает текущее окно (best effort, зависит от приложения).
+/// Usually closes the current window (the best effort, depends on the application).
 ///
-/// Виртуальные коды:
+/// Virtual key codes:
 /// - VK_MENU (Alt) = 0x12
 /// - VK_F4 = 0x73
 ///
-/// # Ошибки
-/// Возвращает `Err(String)`, если SendInput вернул 0 или отправил не все события.
+/// # Errors
+/// Returns `Err(String)` if SendInput returned 0 or did not send all events.
 pub fn send_alt_f4() -> Result<(), String> {
     let vk_alt = VIRTUAL_KEY(0x12); // VK_MENU
     let vk_f4 = VIRTUAL_KEY(0x73);  // VK_F4
@@ -143,15 +142,27 @@ pub fn send_alt_f4() -> Result<(), String> {
     send_key_combo(&[vk_alt], vk_f4)
 }   // send_alt_f4()
 
-/// Описание: Отправляет нажатие Shift+Tab в текущий фокус.
+/// Description: Sends a Shift+Tab combination to the current focus.
 ///
-/// Использует виртуальный код VK_ESCAPE (0x1B).
+/// Uses virtual key codes VK_SHIFT (0x10) and VK_TAB (0x09).
 ///
-/// # Ошибки
-/// Возвращает `Err(String)`, если SendInput не смог отправить события.
+/// # Errors
+/// Returns `Err(String)` if SendInput fails to send the events.
 pub fn send_shift_tab() -> Result<(), String> {
 
     let vk_shift = VIRTUAL_KEY(0x10);
     let vk_tab = VIRTUAL_KEY(0x09);
     send_key_combo(&[vk_shift], vk_tab)
-}   // send_esc()
+}   // send_shift_tab()
+
+/// Description: Sends a Backspace key press to the currently focused window.
+///
+/// Uses the virtual key code `VK_BACK` (0x08).
+///
+/// # Errors
+/// Returns `Err(String)` if `SendInput` fails to send the events.
+pub fn send_backspace() -> Result<(), String> {
+
+    let vk_back = VIRTUAL_KEY(0x08);
+    send_key_press(vk_back)
+}   // send_backspace()

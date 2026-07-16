@@ -18,3 +18,4 @@ pub mod mouse;
 pub mod opencv;
 pub mod screenshot;
 pub mod window;
+pub mod log;

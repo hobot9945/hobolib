@@ -6,7 +6,7 @@ edition = "2024"
 [dependencies]
 serde = { version = "1.0.228", features = ["derive"] }
 toml = "1.1.2"
-
+chrono = "0.4"
 arboard = "3.6.1"
 xcap = "0.9.6"
 opencv = "0.99.0"

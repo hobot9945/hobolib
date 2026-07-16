@@ -3,4 +3,4 @@
 pub mod toml_interface;
 pub mod message_box;
 pub mod panic_hook;
-mod taskbar;
+pub mod taskbar;

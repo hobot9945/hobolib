@@ -53,7 +53,7 @@ const LABEL_RGB: [u8; 3] = [0, 0, 0];
 
 /// Цвет линии сетки (R, G, B, A).
 #[derive(Debug, Clone, Copy)]
-pub(super) struct GridColor(pub u8, pub u8, pub u8, pub u8);
+pub struct GridColor(pub u8, pub u8, pub u8, pub u8);
 
 /// Накладывает координатную сетку на изображение.
 ///
@@ -85,7 +85,7 @@ pub(super) struct GridColor(pub u8, pub u8, pub u8, pub u8);
 /// - `step_px == 0`.
 /// - Исходное изображение пустое (ширина или высота == 0).
 /// - Размеры итогового холста переполняют `u32`.
-pub(super) fn add_grid(src: &RgbaImage, step_px: u32, line_color: GridColor) -> Result<RgbaImage, String> {
+pub fn add_grid(src: &RgbaImage, step_px: u32, line_color: GridColor) -> Result<RgbaImage, String> {
 
     if step_px == 0 {
         return Err("image_grid: step_px должен быть > 0".to_string());

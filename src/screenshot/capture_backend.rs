@@ -49,19 +49,10 @@ use windows::Win32::Graphics::Gdi::{BitBlt, CreateCompatibleBitmap, CreateCompat
                                     DeleteObject, GetDC, GetDIBits, GetWindowDC, ReleaseDC, 
                                     SelectObject, BITMAPINFO, BITMAPINFOHEADER, 
                                     BI_RGB, DIB_RGB_COLORS, HBITMAP, HDC, SRCCOPY};
-
+use crate::screenshot::MonitorGeometry;
 // Локальный курсорный код находится в этом же файле (mouse_tool),
 // поэтому импортируем его явно для читаемости overlay_cursor().
 use self::mouse_tool::{get_cursor_rgba, get_cursor_state};
-
-/// Геометрия монитора в координатах виртуального рабочего стола.
-#[derive(Debug, Clone, Copy)]
-pub struct MonitorGeometry {
-    pub x: i32,
-    pub y: i32,
-    pub width: u32,
-    pub height: u32,
-}   // MonitorGeometry
 
 /// Информация о курсоре на скриншоте.
 ///
@@ -117,8 +108,7 @@ impl CursorInfo {
     /// - `"курсор: (150, 200)"` — курсор внутри изображения.
     /// - `"курсор: (-50, 100) [вне изображения]"` — курсор за пределами.
     /// - `"курсор: скрыт"` — курсор невидим.
-    #[cfg(test)]
-    pub(super) fn report(&self) -> String {
+    pub fn report(&self) -> String {
         if !self.is_visible {
             "Курсор: скрыт".to_string()
         } else if self.is_in_image {

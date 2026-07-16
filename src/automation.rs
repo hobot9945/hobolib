@@ -7,7 +7,7 @@
 //! - Возврат геометрии UI-элементов в экранных координатах.
 //! - Делегирование низкоуровневой работы в `automation_backend`.
 
-pub mod automation_backend;
+mod automation_backend;
 
 use std::thread::sleep;
 use std::time::Duration;

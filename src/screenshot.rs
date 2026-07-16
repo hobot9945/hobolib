@@ -18,7 +18,16 @@ mod test_screenshot_test;
 use std::path::Path;
 use windows::Win32::Foundation::HWND;
 use xcap::image::RgbaImage;
-use crate::screenshot::capture_backend::{CursorInfo, MonitorGeometry};
+pub use crate::screenshot::capture_backend::CursorInfo;
+
+/// Геометрия монитора в координатах виртуального рабочего стола.
+#[derive(Debug, Clone, Copy)]
+pub struct MonitorGeometry {
+    pub x: i32,
+    pub y: i32,
+    pub width: u32,
+    pub height: u32,
+}   // MonitorGeometry
 
 /// Описание: Возвращает количество мониторов в логической нумерации.
 ///

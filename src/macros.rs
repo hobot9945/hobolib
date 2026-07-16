@@ -293,6 +293,48 @@ macro_rules! wrlnln {
     };
 }
 
+/// Writes an error-level message to the log.
+///
+/// Usage: `log_err!(logger, "Failed: {}", err);`
+#[macro_export]
+macro_rules! log_err {
+    ($logger:expr, $($arg:tt)*) => {{
+        let _ = $logger.write(
+            $crate::log::LogLevel::Error,
+            file!(), line!(),
+            format_args!($($arg)*)
+        );
+    }};
+}
+
+/// Writes a warning-level message to the log.
+///
+/// Usage: `log_wrn!(logger, "Retrying in {} ms", delay);`
+#[macro_export]
+macro_rules! log_wrn {
+    ($logger:expr, $($arg:tt)*) => {{
+        let _ = $logger.write(
+            $crate::log::LogLevel::Warning,
+            file!(), line!(),
+            format_args!($($arg)*)
+        );
+    }};
+}
+
+/// Writes an info-level message to the log.
+///
+/// Usage: `log_inf!(logger, "Pipeline started");`
+#[macro_export]
+macro_rules! log_inf {
+    ($logger:expr, $($arg:tt)*) => {{
+        let _ = $logger.write(
+            $crate::log::LogLevel::Info,
+            file!(), line!(),
+            format_args!($($arg)*)
+        );
+    }};
+}
+
 /// Handles a fatal (non-recoverable) error without panicking.
 ///
 /// Logs the error to `stderr` with file name and line number, displays a modal
