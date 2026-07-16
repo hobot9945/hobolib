@@ -335,33 +335,6 @@ macro_rules! log_inf {
     }};
 }
 
-/// Handles a fatal (non-recoverable) error without panicking.
-///
-/// Logs the error to `stderr` with file name and line number, displays a modal
-/// error dialog to the user, and requests global application shutdown.
-///
-/// # Usage
-/// The caller **must return** after invoking this macro. The macro does not
-/// alter control flow (no `panic!`, no `return`).
-///
-/// # Parameters
-/// Accepts the same parameters as the standard `format!`.
-///
-/// # Example
-/// ```ignore
-/// fatal!("Failed to bind to port {}: {}", port, err);
-/// return;
-/// ```
-#[macro_export]
-macro_rules! fatal {
-    ($($arg:tt)*) => {{
-        let msg = format!($($arg)*);
-        $crate::eprntln!("{}", msg);
-        $crate::misc::message_box::show_error("Fatal Error", &msg);
-        $crate::glob::request_shutdown();
-    }};
-}
-
 #[cfg(test)]
 mod tests {
 
